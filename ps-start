@@ -1,0 +1,24 @@
+#!/bin/bash
+
+DEVICE=$1
+
+if [ ! $DEVICE ]; then
+  echo "usage: ps-start <device>"
+  exit 1
+fi
+
+if [ ! $PERSONA_ROOT ]; then
+  echo "PERSONA_ROOT not specified"
+  exit 1
+fi
+
+pushd $PERSONA_ROOT
+
+IP_ADDRESS=`ifconfig $DEVICE | grep "inet " | sed "s/.*inet \(.*\) netmask.*/\1/"`
+
+echo "starting server at $IP_ADDRESS"
+
+IP_ADDRESS=$IP_ADDRESS npm start
+
+popd
+

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ ! $BIGTENT_CERTIFIER_ROOT ]; then
+  echo "BIGTENT_CERTIFIER_ROOT not specified"
+  exit 1
+fi
+
+pushd $BIGTENT_CERTIFIER_ROOT
+
+CONFIG_FILES=config/local.json npm start
+
+popd
+
+
+

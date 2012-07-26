@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ ! $PERSONA_ROOT ]; then
+  echo "PERSONA_ROOT not specified"
+  exit 1
+fi
+
+pushd $PERSONA_ROOT > /dev/null
+echo "Removing the user database"
+
+if [ -f var/authdb.json ]; then
+  rm var/authdb.json 
+fi
+
+popd > /dev/null

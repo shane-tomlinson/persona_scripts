@@ -1,0 +1,41 @@
+#!/bin/bash
+
+VERB=$1
+BRANCH=$2
+ORIGIN_BRANCH=$3
+
+function usage() {
+  echo "usage: ps-branch <checkout|cleanup> <branch> [<origin_branch>]"
+  exit 1
+}
+
+if [ ! $BRANCH ]; then
+  usage
+fi
+
+if [ ! $PERSONA_ROOT ]; then
+  echo "PERSONA_ROOT not specified"
+  exit 1
+fi
+
+pushd $PERSONA_ROOT > /dev/null
+
+if [ $VERB == "checkout" ]; then
+  if [ $ORIGIN_BRANCH ]; then
+    git checkout -b $BRANCH $ORIGIN_BRANCH && npm install
+  else
+    git checkout $BRANCH && npm install
+  fi
+elif [ $VERB == "cleanup" ]; then
+  echo "deleting $BRANCH on origin"
+  git push origin :$BRANCH > /dev/null
+
+  echo "deleting $BRANCH locally"
+  git branch -D $BRANCH > /dev/null
+else
+  usage
+fi
+
+popd > /dev/null
+
+

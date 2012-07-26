@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ ! $BIGTENT_ROOT ]; then
+  echo "BIGTENT_ROOT not specified"
+  exit 1
+fi
+
+pushd $BIGTENT_ROOT
+
+sudo ./server/bin/bigtent
+
+popd
+
+
+

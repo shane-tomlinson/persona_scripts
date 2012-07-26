@@ -1,0 +1,62 @@
+#!/bin/bash
+
+VERB=$1
+DIR="$( cd "$( dirname "$0" )" && pwd )"
+LIBDIR="$DIR/lib"
+
+INSTANCE_NAME=$2
+
+usage() {
+  echo "usage: ps-instance <deploy|destroy|list|update> [<instance_name>]"
+  exit 1
+}
+
+require_instance_name() {
+  if [ ! $INSTANCE_NAME ]; then
+    usage
+  fi
+}
+
+if [ ! $VERB  ]; then 
+  usage
+fi
+
+if [ ! $PERSONA_ROOT ]; then
+  echo "PERSONA_ROOT not specified"
+  exit 1
+fi
+
+pushd $PERSONA_ROOT > /dev/null
+
+if [ $VERB == "deploy" ]; then
+  require_instance_name
+
+  echo "Creating instance $INSTANCE_NAME"
+  ./scripts/deploy.js deploy $INSTANCE_NAME -t m1.medium
+
+  echo "Pushing repo to server"
+  git push $INSTANCE_NAME HEAD:master
+
+  $LIBDIR/aws-instance-add.js $INSTANCE_NAME
+elif [ $VERB == "destroy" ]; then
+  require_instance_name
+
+  echo "Destroying instance $INSTANCE_NAME"
+  ./scripts/deploy.js destroy $INSTANCE_NAME
+  $LIBDIR/aws-instance-remove.js $INSTANCE_NAME
+
+elif [ $VERB == "list" ]; then
+  $LIBDIR/aws-instance-list.js 
+
+elif [ $VERB == "update" ]; then
+  require_instance_name
+
+  echo "Pushing repo to server"
+  git push -f $INSTANCE_NAME HEAD:master
+
+else
+  usage
+fi
+
+popd > /dev/null
+

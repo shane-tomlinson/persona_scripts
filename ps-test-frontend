@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ ! $PERSONA_ROOT ]; then
+  echo "PERSONA_ROOT not specified"
+  exit 1
+fi
+
+pushd $PERSONA_ROOT
+
+./scripts/test_frontend
+
+popd
+

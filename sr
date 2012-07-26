@@ -1,0 +1,22 @@
+#!/bin/bash
+
+FROM=$1
+TO=$2
+FILES="*"
+
+if [ $# -lt 2 ]; then
+  echo "usage: sr <from> <to> [<file>]"
+  exit 1;
+fi
+
+FILES_TEXT=""
+if [ $# -ge 3 ]; then
+  NUM_FILES=$#-2
+  FILES=${@:3:$NUM_FILES}
+  FILES_TEXT="in file(s) $FILES"
+fi
+
+echo "Replacing \"$FROM\" with \"$TO\" $FILES_TEXT"
+
+perl -p -i -e "s/$1/$2/g" $FILES
+

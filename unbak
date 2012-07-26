@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# copy a backup file to the original filename without the .bak extension
+
+if [ -z $1 ]; then
+  echo "usage: unbak source_file"
+  exit 1
+fi
+
+if [ -e $1.bak ]; then
+  mv $1.bak $1
+else
+  echo "$1.bak does not exist"
+  exit 1
+fi
+

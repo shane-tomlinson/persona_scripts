@@ -11,12 +11,15 @@ function usage() {
   echo "    -u <url>          Base RP URL"
 }
 
+function noop() {
+  :
+}
+
+
 if [ ! $PERSONA_ROOT ]; then
   echo "PERSONA_ROOT not specified"
   exit 1
 fi
-
-pushd $PERSONA_ROOT/automation-tests > /dev/null
 
 DRIVER="firefox"
 TEST_NAME="123done"
@@ -53,15 +56,16 @@ if [ ! -d $PERSONA_ROOT/automation-tests ]; then
   exit 1
 fi
 
-if [ ! -f credentials.yaml ]; then
+AUTOMATED_TESTSDIR="$PERSONA_ROOT/automation-tests"
+
+if [ ! -f $AUTOMATED_TESTSDIR/credentials.yaml ]; then
   echo "cannot find credentials.yaml"
   exit 1
 fi
 
-
 EXTRA_PARAMS=""
 if [ $DRIVER == "firefox" ]; then
-  echo ''
+  noop
 elif [ $DRIVER == "chrome" ]; then
   if [ ! -f $CHROMEDRIVER_PATH ]; then
     echo "cannot find the chrome selenium driver at $CHROMEDRIVER_PATH"
@@ -73,6 +77,8 @@ else
   exit 1
 fi
 
+pushd $AUTOMATED_TESTSDIR > /dev/null
+
 . bid_selenium/bin/activate
 
 echo "using the $DRIVER driver to test $TEST_NAME at $BASE_URL"
@@ -82,4 +88,3 @@ py.test --destructive --credentials=credentials.yaml --baseurl=$BASE_URL --drive
 deactivate
 
 popd > /dev/null
-

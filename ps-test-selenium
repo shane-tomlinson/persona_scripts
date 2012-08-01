@@ -53,6 +53,11 @@ if [ ! -d $PERSONA_ROOT/automation-tests ]; then
   exit 1
 fi
 
+if [ ! -f credentials.yaml ]; then
+  echo "cannot find credentials.yaml"
+  exit 1
+fi
+
 
 EXTRA_PARAMS=""
 if [ $DRIVER == "firefox" ]; then

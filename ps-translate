@@ -1,5 +1,8 @@
 #!/bin/bash
 
+function usage() {
+  echo "usage: ps-translate [svn]"
+}
 
 SVN_UP=""
 if [ $1="svn" ]; then
@@ -13,19 +16,19 @@ fi
 
 pushd $PERSONA_ROOT
 
-#if [ $SVN_UP ]; then 
-#  echo "Updating SVN repo"
-#  svn co -q http://svn.mozilla.org/projects/l10n-misc/trunk/browserid/locale
-#  cd locale
-#  svn up
-#  cd ..
+if [ $SVN_UP ]; then 
+  echo "Updating SVN repo"
+  svn co -q http://svn.mozilla.org/projects/l10n-misc/trunk/browserid/locale
+  cd locale
+  svn up
+  cd ..
 
-#  for file in locale/templates/LC_MESSAGES/*.pot ; do
-#      mv $file $file.old
-#      sed 's/CHARSET/UTF-8/g' $file.old > $file
-#      rm -f $file.old
-#  done
-#fi
+  for file in locale/templates/LC_MESSAGES/*.pot ; do
+      mv $file $file.old
+      sed 's/CHARSET/UTF-8/g' $file.old > $file
+      rm -f $file.old
+  done
+fi
 
 echo "Extracting PO files"
 ./scripts/extract_po.sh locale

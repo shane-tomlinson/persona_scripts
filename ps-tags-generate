@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ ! $PERSONA_ROOT ]; then
+  echo "PERSONA_ROOT not specified"
+  exit 1
+fi
+
+pushd $PERSONA_ROOT/resources/static > /dev/null
+
+PATHS=(
+  "common/js/*.js" 
+  "common/js/models/*.js" 
+  "common/js/modules/*.js" 
+  "pages/js/."
+  "dialog/js/."
+)
+ 
+echo generating tags
+jsctags ${PATHS[@]}
+
+echo "tags file found in `pwd`"
+
+popd > /dev/null

@@ -1,0 +1,80 @@
+#!/bin/bash
+
+CHROMEDRIVER_PATH="/usr/local/bin/chromedriver"
+
+function usage() {
+  echo "usage: ps-test-selenium [-dht]"
+  echo "options:"
+  echo "    -d <driver>       firefox|chrome"
+  echo "    -h                Help"
+  echo "    -t <test_name>    test name"
+  echo "    -u <url>          Base RP URL"
+}
+
+if [ ! $PERSONA_ROOT ]; then
+  echo "PERSONA_ROOT not specified"
+  exit 1
+fi
+
+pushd $PERSONA_ROOT/automation-tests > /dev/null
+
+DRIVER="firefox"
+TEST_NAME="123done"
+BASE_URL="http://dev.123done.org"
+
+while getopts "d:t:u:h" opt; do
+  case $opt in
+    d)
+      DRIVER=$OPTARG
+      ;;
+    t)
+      TEST_NAME=$OPTARG
+      ;;
+    u)
+      BASE_URL=$OPTARG
+      ;;
+    \?)
+      usage
+      exit 1
+      ;;
+    h)
+      usage
+      exit 0
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
+
+if [ ! -d $PERSONA_ROOT/automation-tests ]; then
+  echo "cannot find automation-tests directory"
+  exit 1
+fi
+
+
+EXTRA_PARAMS=""
+if [ $DRIVER == "firefox" ]; then
+  echo ''
+elif [ $DRIVER == "chrome" ]; then
+  if [ ! -f $CHROMEDRIVER_PATH ]; then
+    echo "cannot find the chrome selenium driver at $CHROMEDRIVER_PATH"
+    exit 1
+  fi
+  EXTRA_PARAMS=" --chromepath=$CHROMEDRIVER_PATH "
+else
+  echo "invalid driver"
+  exit 1
+fi
+
+. bid_selenium/bin/activate
+
+echo "using the $DRIVER driver to test $TEST_NAME at $BASE_URL"
+
+py.test --destructive --credentials=credentials.yaml --baseurl=$BASE_URL --driver=$DRIVER -q $TEST_NAME $EXTRA_PARAMS
+
+deactivate
+
+popd > /dev/null
+
